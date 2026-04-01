@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Lexalyze - Professional Dashboard</title>
+
+    <link rel="stylesheet" href="../css/dashboard.css" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#3b82f6",
+              "primary-dark": "#2563eb",
+              "background-dark": "#0f111a",
+              "surface-dark": "#1a1d2d",
+              "surface-glass": "rgba(26, 29, 45, 0.75)"
+            },
+            fontFamily: {
+              "display": ["Outfit", "sans-serif"]
+            }
+          }
+        }
+      };
+    </script>
+    <script src="../js/dashboard.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+</head>
+
+<body class="bg-background-dark font-display text-slate-100 min-h-screen flex flex-col items-center">
+
+    <div class="w-full max-w-[1400px] flex flex-col min-h-screen relative">
+
+        <!-- Top Header -->
+        <header
+            class="sticky top-0 z-50 glass px-6 py-4 flex items-center justify-between border-b border-white/5 rounded-b-2xl mx-2 mt-2">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center shadow-lg shadow-primary/20">
+                    <span class="text-xl">⚖️</span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-white leading-tight">Lexalyze</h1>
+                    <p class="text-[10px] text-slate-400 font-medium tracking-widest uppercase">Intelligence Hub</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div id="lawyerPanel" class="hidden flex-col items-end mr-2">
+                    <span id="firmDisplay" class="text-xs font-bold text-slate-300">Law Firm</span>
+                    <span id="licenseDisplay" class="text-[10px] text-slate-500">ID: Pending</span>
+                </div>
+
+                <div class="flex items-center gap-1.5 bg-background-dark border border-white/10 px-3 py-1.5 rounded-lg">
+                    <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <span id="userRole"
+                        class="text-xs font-bold uppercase tracking-wider text-slate-300">Professional</span>
+                </div>
+
+                <div class="h-8 w-px bg-white/10 mx-1"></div>
+
+                <div class="flex items-center gap-2 cursor-pointer group">
+                    <div
+                        class="w-8 h-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-primary font-bold group-hover:bg-primary/30 transition">
+                        <span id="userInitials">U</span>
+                    </div>
+                    <span id="userDisplay" class="text-sm font-bold hidden sm:block">User</span>
+                </div>
+
+                <button id="logoutBtn"
+                    class="text-slate-500 hover:text-rose-400 ml-2 transition-colors flex items-center justify-center w-8 h-8 rounded-full hover:bg-rose-400/10">
+                    <span class="material-symbols-outlined text-[20px]">logout</span>
+                </button>
+            </div>
+        </header>
+
+        <main
+            class="flex-1 overflow-y-auto custom-scroll p-4 md:p-6 lg:p-8 space-y-6 pb-28 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+            <!-- Left Column: Upload & Controls -->
+            <section class="space-y-6 lg:col-span-5 lg:sticky lg:top-28">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="material-symbols-outlined text-primary text-[20px]">upload_file</span>
+                    <h2 class="text-lg font-bold">Document Input</h2>
+                </div>
+
+                <div id="dropZone"
+                    class="glass p-8 rounded-2xl border-dashed border-2 border-white/10 hover:border-primary/50 flex flex-col items-center justify-center text-center gap-4 cursor-pointer transition-all group">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-primary/10 to-blue-500/10 rounded-2xl flex items-center justify-center text-primary group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.2)] transition-all duration-300">
+                        <span class="material-symbols-outlined text-4xl">cloud_upload</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-white mb-1">Upload Source File</h3>
+                        <p class="text-sm text-slate-400">Drag &amp; drop PDF/TXT or click to browse</p>
+                    </div>
+                    <div
+                        class="px-4 py-1.5 rounded-full bg-surface-dark border border-white/5 text-[10px] font-bold text-slate-500 tracking-wider">
+                        MAX 10MB
+                    </div>
+                    <input type="file" id="fileInput" hidden accept=".txt,.pdf">
+                </div>
+
+                <div class="glass p-5 rounded-2xl space-y-5">
+                    <label class="block">
+                        <div class="flex justify-between items-center mb-2">
+                            <span
+                                class="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-1.5">
+                                <span class="material-symbols-outlined !text-[14px]">edit_document</span>
+                                Raw Text
+                            </span>
+                            <span class="text-[10px] px-2 py-0.5 roundedbg-black/30 text-slate-500 font-mono"><span
+                                    id="charCount">0</span> chars</span>
+                        </div>
+                        <textarea id="contractText"
+                            class="w-full input-premium rounded-xl p-4 text-sm focus:ring-primary focus:border-primary placeholder:text-slate-600 h-40 custom-scroll"
+                            placeholder="Paste legal, financial, or contract text here..."></textarea>
+                    </label>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <label
+                            class="flex items-center gap-3 p-3 rounded-xl bg-surface-dark border border-white/5 cursor-pointer hover:border-white/10 transition">
+                            <input type="checkbox" id="analyzeCheckbox" checked
+                                class="form-checkbox h-4 w-4 text-primary rounded border-white/20 bg-background-dark focus:ring-primary focus:ring-offset-background-dark">
+                            <span class="text-sm font-semibold text-slate-300">Extract Clauses</span>
+                        </label>
+                        <label
+                            class="flex items-center gap-3 p-3 rounded-xl bg-surface-dark border border-white/5 cursor-pointer hover:border-white/10 transition">
+                            <input type="checkbox" id="risksCheckbox" checked
+                                class="form-checkbox h-4 w-4 text-primary rounded border-white/20 bg-background-dark focus:ring-primary focus:ring-offset-background-dark">
+                            <span class="text-sm font-semibold text-slate-300">Assess Risks</span>
+                        </label>
+                        <label
+                            class="flex items-center gap-3 p-3 rounded-xl bg-surface-dark border border-white/5 cursor-pointer hover:border-white/10 transition">
+                            <input type="checkbox" id="summaryCheckbox" checked
+                                class="form-checkbox h-4 w-4 text-primary rounded border-white/20 bg-background-dark focus:ring-primary focus:ring-offset-background-dark">
+                            <span class="text-sm font-semibold text-slate-300">Summarize</span>
+                        </label>
+                        <label
+                            class="flex items-center gap-3 p-3 rounded-xl bg-surface-dark border border-white/5 cursor-pointer hover:border-white/10 transition">
+                            <input type="checkbox" id="notesCheckbox" checked
+                                class="form-checkbox h-4 w-4 text-primary rounded border-white/20 bg-background-dark focus:ring-primary focus:ring-offset-background-dark">
+                            <span class="text-sm font-semibold text-slate-300">AI Audit Notes</span>
+                        </label>
+                    </div>
+
+                    <div class="flex gap-3 pt-2">
+                        <button id="resetBtn"
+                            class="px-5 bg-background-dark hover:bg-black text-slate-400 hover:text-white py-3.5 rounded-xl text-sm font-bold border border-white/10 transition-all">Clear</button>
+                        <button id="analyzeBtn"
+                            class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/20 border border-white/10 transition-all hover:-translate-y-0.5">
+                            <span class="material-symbols-outlined !text-[20px]">auto_awesome</span>
+                            Initialize Analysis
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Column: Results -->
+            <section class="space-y-6 lg:col-span-7 selection:bg-primary/30">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="material-symbols-outlined text-purple-400 text-[20px]">analytics</span>
+                    <h2 class="text-lg font-bold">Analysis Output</h2>
+                </div>
+
+                <!-- Insights Summary Cards -->
+                <div id="resultsSection"
+                    class="grid grid-cols-2 md:grid-cols-3 gap-4 transition-all duration-500 opacity-50 pointer-events-none">
+
+                    <div class="glass p-5 rounded-2xl flex flex-col justify-between relative overflow-hidden group">
+                        <div
+                            class="absolute -right-4 -top-4 w-16 h-16 bg-primary/10 rounded-full blur-xl group-hover:bg-primary/20 transition">
+                        </div>
+                        <span
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5"><span
+                                class="material-symbols-outlined !text-[14px]">category</span> Classification</span>
+                        <div class="py-4">
+                            <span id="documentTypeLabel"
+                                class="text-lg md:text-xl font-bold text-white leading-tight block">Awaiting
+                                Input...</span>
+                        </div>
+                    </div>
+
+                    <div class="glass p-5 rounded-2xl flex flex-col justify-between items-center text-center">
+                        <span
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-widest w-full text-left flex items-center gap-1.5"><span
+                                class="material-symbols-outlined !text-[14px]">radar</span> AI Confidence</span>
+                        <div class="relative flex items-center justify-center py-2">
+                            <svg class="w-16 h-16 transform -rotate-90">
+                                <circle class="text-white/5" cx="32" cy="32" fill="transparent" r="28"
+                                    stroke="currentColor" stroke-width="5"></circle>
+                                <circle id="accuracyCircle" class="text-primary transition-all duration-1000 ease-out"
+                                    cx="32" cy="32" fill="transparent" r="28" stroke="currentColor"
+                                    stroke-dasharray="176" stroke-dashoffset="176" stroke-width="5"
+                                    stroke-linecap="round"></circle>
+                            </svg>
+                            <span id="accuracyPercent" class="absolute text-sm font-bold text-white">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="glass p-5 rounded-2xl flex flex-col justify-between col-span-2 md:col-span-1"
+                        id="riskDisplay">
+                        <div class="flex justify-between items-center mb-4 md:mb-2">
+                            <span
+                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5"><span
+                                    class="material-symbols-outlined !text-[14px]">warning</span> Risk Level</span>
+                            <span id="riskPercent"
+                                class="text-xs font-bold text-white bg-white/10 px-2 py-0.5 rounded">0%</span>
+                        </div>
+                        <div>
+                            <div class="text-lg font-bold mb-2 text-slate-500" id="riskLevel">Pending</div>
+                            <div class="flex gap-1.5 h-2 w-full">
+                                <div class="flex-1 bg-emerald-500 opacity-20 rounded-full transition-opacity"
+                                    id="riskBarLow"></div>
+                                <div class="flex-1 bg-amber-500 opacity-20 rounded-full transition-opacity"
+                                    id="riskBarMed"></div>
+                                <div class="flex-1 bg-rose-500 opacity-20 rounded-full transition-opacity"
+                                    id="riskBarHigh"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analysis Detail Tabs -->
+                <div id="tabsSection"
+                    class="glass rounded-2xl overflow-hidden flex flex-col transition-all duration-500 opacity-50 pointer-events-none min-h-[400px]">
+                    <div class="flex border-b border-white/5 bg-background-dark/50 p-2 gap-2">
+                        <button
+                            class="tab-btn active flex-1 py-2.5 px-4 text-xs font-bold rounded-xl bg-white/10 text-white transition-all"
+                            data-tab="clauses"><span
+                                class="material-symbols-outlined align-middle mr-1 !text-[16px]">account_tree</span>
+                            EXTRACTION</button>
+                        <button
+                            class="tab-btn flex-1 py-2.5 px-4 text-xs font-bold text-slate-500 rounded-xl hover:bg-white/5 transition-all"
+                            data-tab="risks"><span
+                                class="material-symbols-outlined align-middle mr-1 !text-[16px]">gavel</span>
+                            LIABILITIES</button>
+                        <button
+                            class="tab-btn flex-1 py-2.5 px-4 text-xs font-bold text-slate-500 rounded-xl hover:bg-white/5 transition-all"
+                            data-tab="notes"><span
+                                class="material-symbols-outlined align-middle mr-1 !text-[16px]">assignment_turned_in</span>
+                            AUDIT</button>
+                        <button
+                            class="tab-btn flex-1 py-2.5 px-4 text-xs font-bold text-slate-500 rounded-xl hover:bg-white/5 transition-all hidden sm:block"
+                            data-tab="summary"><span
+                                class="material-symbols-outlined align-middle mr-1 !text-[16px]">short_text</span>
+                            BRIEF</button>
+                    </div>
+
+                    <div class="p-6 relative flex-1">
+                        <!-- Clauses Tab -->
+                        <div id="clauses-tab" class="tab-content block h-full">
+                            <div id="clausesCard" class="hidden h-full flex flex-col">
+                                <div class="flex justify-between items-center mb-4 pb-3 border-b border-white/5">
+                                    <h4
+                                        class="text-xs font-bold text-slate-300 uppercase tracking-widest flex items-center gap-2">
+                                        <div class="w-2 h-2 rounded-full bg-primary"></div>
+                                        Identified Provisions (<span id="clauseCount" class="text-white">0</span>)
+                                    </h4>
+                                </div>
+                                <div id="clausesOutput" class="space-y-3 text-sm flex-1 custom-scroll pr-2"></div>
+                            </div>
+                            <div id="clausesEmpty"
+                                class="h-full flex flex-col items-center justify-center text-slate-500 opacity-50">
+                                <span class="material-symbols-outlined text-4xl mb-2">account_tree</span>
+                                <p class="text-sm font-medium">Extracting key entities and clauses...</p>
+                            </div>
+                        </div>
+
+                        <!-- Risks Tab -->
+                        <div id="risks-tab" class="tab-content hidden h-full">
+                            <div id="risksCard" class="hidden h-full flex flex-col">
+                                <div class="flex justify-between items-center mb-4 pb-3 border-b border-white/5">
+                                    <h4
+                                        class="text-xs font-bold text-slate-300 uppercase tracking-widest flex items-center gap-2">
+                                        <div class="w-2 h-2 rounded-full bg-rose-500"></div>
+                                        Liability & Risk Warnings
+                                    </h4>
+                                </div>
+                                <div id="risksOutput" class="space-y-3 text-sm flex-1 custom-scroll pr-2"></div>
+                            </div>
+                        </div>
+
+                        <!-- Notes Tab -->
+                        <div id="notes-tab" class="tab-content hidden h-full">
+                            <div id="notesCard" class="hidden h-full flex flex-col">
+                                <div class="flex justify-between items-center mb-4 pb-3 border-b border-white/5">
+                                    <h4
+                                        class="text-xs font-bold text-slate-300 uppercase tracking-widest flex items-center gap-2">
+                                        <div class="w-2 h-2 rounded-full bg-purple-500"></div>
+                                        AI Audit Recommendations
+                                    </h4>
+                                </div>
+                                <div id="notesOutput"
+                                    class="space-y-4 text-sm flex-1 custom-scroll pr-2 leading-relaxed text-slate-300">
+                                </div>
+
+                                <div id="downloadCard" class="hidden pt-4 border-t border-white/5 mt-4">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                            Export Report</h4>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <button id="downloadNotesPdfBtn"
+                                            class="flex-1 bg-background-dark hover:bg-white/5 py-2.5 rounded-xl text-xs font-bold border border-white/10 transition flex items-center justify-center gap-2 text-white">
+                                            <span
+                                                class="material-symbols-outlined !text-[16px] text-red-400">picture_as_pdf</span>
+                                            Secure PDF
+                                        </button>
+                                        <button id="downloadNotesTxtBtn"
+                                            class="flex-1 bg-background-dark hover:bg-white/5 py-2.5 rounded-xl text-xs font-bold border border-white/10 transition flex items-center justify-center gap-2 text-white">
+                                            <span
+                                                class="material-symbols-outlined !text-[16px] text-blue-400">description</span>
+                                            Raw Text
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Summary Tab -->
+                        <div id="summary-tab" class="tab-content hidden h-full">
+                            <div id="summaryCard" class="hidden h-full flex flex-col">
+                                <div class="flex justify-between items-center mb-4 pb-3 border-b border-white/5">
+                                    <h4
+                                        class="text-xs font-bold text-slate-300 uppercase tracking-widest flex items-center gap-2">
+                                        <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                                        Executive Brief
+                                    </h4>
+                                </div>
+                                <div id="summaryOutput"
+                                    class="text-sm font-mono whitespace-pre-wrap p-4 bg-background-dark/50 rounded-xl border border-white/5 leading-relaxed text-slate-300 flex-1 custom-scroll">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Navigation Bar for Mobile -->
+        <nav
+            class="lg:hidden fixed bottom-0 left-0 right-0 glass border-t border-white/10 px-6 pb-6 pt-3 flex justify-between items-center z-40 rounded-t-2xl mx-2">
+            <a class="flex flex-col items-center gap-1 text-primary" href="#">
+                <span class="material-symbols-outlined !text-[24px]">dashboard</span>
+                <span class="text-[10px] font-bold">Dashboard</span>
+            </a>
+            <a class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition" href="#">
+                <span class="material-symbols-outlined !text-[24px]">history</span>
+                <span class="text-[10px] font-bold">History</span>
+            </a>
+            <a class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition" href="#">
+                <span class="material-symbols-outlined !text-[24px]">folder_shared</span>
+                <span class="text-[10px] font-bold">Vault</span>
+            </a>
+            <a class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition" href="#">
+                <span class="material-symbols-outlined !text-[24px]">settings</span>
+                <span class="text-[10px] font-bold">Settings</span>
+            </a>
+        </nav>
+
+    </div>
+
+    <!-- Processing Overlay -->
+    <div id="statusMessage"
+        class="hidden fixed inset-0 bg-background-dark/90 backdrop-blur-md z-[100] flex items-center justify-center transition-opacity">
+        <div class="flex flex-col items-center">
+            <div class="relative w-24 h-24 mb-6">
+                <div class="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin">
+                </div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-3xl text-primary animate-pulse">memory</span>
+                </div>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2 tracking-wide">Lexing Context</h3>
+            <p id="statusText" class="text-sm text-slate-400 font-mono tracking-widest uppercase">Initializing neural
+                pathways...</p>
+        </div>
+    </div>
+
+    <!-- Alert Notification -->
+    <div id="alertBanner"
+        class="hidden fixed bottom-24 lg:bottom-10 lg:right-10 right-4 z-[200] max-w-sm w-full bg-surface-glass backdrop-blur-xl border border-white/10 p-4 rounded-xl shadow-2xl flex items-start gap-3 transform translate-y-10 opacity-0 transition-all duration-300">
+        <div id="alertIcon" class="mt-0.5"><span class="material-symbols-outlined text-blue-400">info</span></div>
+        <div class="flex-1">
+            <h4 id="alertTitle" class="text-sm font-bold text-white mb-0.5">Notification</h4>
+            <p id="alertText" class="text-xs text-slate-300">Alert message goes here.</p>
+        </div>
+        <button onclick="closeAlert()"
+            class="text-slate-500 hover:text-white transition-colors opacity-70 hover:opacity-100">
+            <span class="material-symbols-outlined !text-[18px]">close</span>
+        </button>
+    </div>
+
+</body>
+
+</html>
