@@ -90,6 +90,8 @@ Access is restricted to verified professionals:
 * PDF report generation
 
 ---
+## 🚀 Live Demo
+🔗 [Visit Lexalyze](https://lexalyze.netlify.app/)
 
 ## ⚠️ Current Status
 
